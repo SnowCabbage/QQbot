@@ -1,9 +1,9 @@
 from flask import Flask, request
-from jinja2 import environment
 
 from FlaskMode.methods.gptApi import gptRequest
 from FlaskMode.methods.loggerUnit import logger
 from FlaskMode.methods.sendMsg import sendMsg
+from FlaskMode.Info.INFO import image1Url, image2Url
 
 app = Flask(__name__)
 
@@ -22,6 +22,8 @@ def process():
     rev = request.get_json()
     global idList
 
+    url = image2Url
+
     if rev["post_type"] == "message":
 
         msgId = rev['message_id']
@@ -32,11 +34,13 @@ def process():
         if msgId not in idList:
             idList.append(msgId)
         else:
-            return 'OK'
+            return 'OK', 200
         logger.info(rev)
         if rev["message_type"] == "private":  # 私聊
             # GPTRequest
             getMsg = gptReq.getResponse(rev["raw_message"])
+
+            # Test
 
             # BingRequest
             # getMsg = asyncio.run(bingRequest.getRequest(rev["raw_message"]))
@@ -50,8 +54,15 @@ def process():
             group = rev['group_id']
             if "[CQ:at,qq=3185995974]" in rev["raw_message"]:
                 print(rev["raw_message"])
+                if rev['sender']['card'] != '':
+                    user = rev['sender']['card']
+                else:
+                    user = rev['sender']['nickname']
                 # GPTRequest
                 getMsg = gptReq.getResponse(rev["raw_message"].split(" ")[1])
+
+                # Test
+                # getMsg = 'GG'
 
                 # BingRequest
                 # getMsg = asyncio.run(bingRequest.getRequest(rev["raw_message"]))
@@ -64,7 +75,7 @@ def process():
                 print(getMsg)
                 sendMsg({'msg_type': 'group', 'number': group, 'msg': f'[CQ:at,qq={qq}]' + getMsg})
 
-    return 'OK'
+    return 'OK', 200
 
 
 if __name__ == '__main__':

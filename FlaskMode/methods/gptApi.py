@@ -2,8 +2,8 @@ import requests
 import openai
 from tenacity import retry, wait_random_exponential, stop_after_attempt
 
-from function.constInfo import gptApiKey
-from function.loggerUnit import logger
+from FlaskMode.Info.INFO import gptApiKey
+from FlaskMode.methods.loggerUnit import logger
 
 openai.api_key = gptApiKey
 
@@ -26,6 +26,8 @@ class gptRequest():
 
     @retry(wait=wait_random_exponential(min=18, max=60), stop=stop_after_attempt(10))
     def getResponse(self, msg):
+        logger.info(msg)
+
         self.messages.append({'role': 'user', 'content': msg})
         response = openai.ChatCompletion.create(
             model='gpt-3.5-turbo',

@@ -2,7 +2,7 @@ from urllib import parse
 
 import requests
 
-from function.constInfo import MyQQ, TESTId
+from FlaskMode.Info.INFO import MyQQ, TESTId
 
 baseUrl = 'http://127.0.0.1:5700/'
 
